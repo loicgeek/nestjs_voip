@@ -56,7 +56,7 @@ export class RoomGateway implements OnGatewayInit {
         socket: socket.id,
       });
     });
-    socket.on('hang-up',(data)=>{
+    socket.on('hang-up', (data) => {
       socket.to(data.from).broadcast.emit('remove-user', {
         socketId: socket.id,
       });
