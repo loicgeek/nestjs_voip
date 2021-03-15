@@ -29,7 +29,7 @@ export class RoomGateway implements OnGatewayInit {
       });
 
       socket.broadcast.emit('update-user-list', {
-        users: [socket.id],
+        users: this.activeSockets,
       });
     }
 
@@ -41,6 +41,8 @@ export class RoomGateway implements OnGatewayInit {
     });
 
     socket.on('make-answer', (data) => {
+      this.logger.log('answer made');
+      this.logger.log(data);
       socket.to(data.to).emit('answer-made', {
         socket: socket.id,
         answer: data.answer,
@@ -48,8 +50,15 @@ export class RoomGateway implements OnGatewayInit {
     });
 
     socket.on('reject-call', (data) => {
+      this.logger.log('rejecting call');
+      this.logger.log(data);
       socket.to(data.from).emit('call-rejected', {
         socket: socket.id,
+      });
+    });
+    socket.on('hang-up',(data)=>{
+      socket.to(data.from).broadcast.emit('remove-user', {
+        socketId: socket.id,
       });
     });
 
